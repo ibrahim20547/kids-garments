@@ -1,0 +1,454 @@
+/* ==========================================================================
+   KIDS GARMENTS — MODERN LUXURY CHILDREN'S FASHION DESIGN SYSTEM
+   Clean, Editorial, Minimalist & Quiet Luxury Children's Apparel
+   ========================================================================== */
+
+:root {
+  /* Typography */
+  --font-serif: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: var(--font-serif);
+  --font-body: var(--font-sans);
+  --font-main: var(--font-sans);
+  --font-fun: var(--font-serif);
+
+  /* Quiet Luxury Neutral Palette */
+  --bg-page: #FAF9F5;
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-alt: #F4EFE6;
+  --bg-secondary: #EBE6DC;
+  
+  --text-dark: #18181A;
+  --text-main: #18181A;
+  --text-body: #4E4D4A;
+  --text-secondary: #6A6964;
+  --text-muted: #8E8D88;
+  --text-light: #FFFFFF;
+
+  /* Primary Brand Tokens (Charcoal & Subtle Accents) */
+  --primary: #1C1D1F;
+  --primary-hover: #35363B;
+  --primary-light: #F2EFE9;
+  --primary-glow: rgba(28, 29, 31, 0.08);
+
+  --secondary: #6B7B6E;
+  --secondary-hover: #556358;
+  --secondary-light: #EDF2ED;
+
+  --accent-sage: #6B7B6E;
+  --accent-sage-light: #EDF2ED;
+  --accent-terracotta: #9C6650;
+  --accent-terracotta-light: #F7EFEA;
+  --accent-sand: #D4C9B8;
+  --accent-navy: #2C3848;
+
+  /* Refined Borders & Structure */
+  --border-light: #EBE6DB;
+  --border-color: #D9D2C3;
+  --border-subtle: #F0ECE3;
+  --border-strong: #C8BFAD;
+
+  /* Minimalist Elevations (No heavy drop shadows) */
+  --shadow-sm: 0 1px 3px rgba(24, 24, 26, 0.03), 0 1px 2px rgba(24, 24, 26, 0.02);
+  --shadow-md: 0 4px 16px rgba(24, 24, 26, 0.04), 0 1px 4px rgba(24, 24, 26, 0.02);
+  --shadow-lg: 0 12px 32px rgba(24, 24, 26, 0.06), 0 2px 8px rgba(24, 24, 26, 0.03);
+  --shadow-hover: 0 16px 36px rgba(24, 24, 26, 0.08);
+
+  /* Modern Radius */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-full: 9999px;
+
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: var(--font-body);
+  color: var(--text-main);
+  background-color: var(--bg-page);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: var(--transition);
+}
+
+input, select, textarea {
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ---------------- Layout & Containers ---------------- */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.container-sm {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ---------------- Typography ---------------- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--text-main);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+.subheading {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-terracotta);
+}
+
+/* ---------------- Buttons ---------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  transition: var(--transition);
+  user-select: none;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: #FFFFFF;
+  border: 1px solid var(--primary);
+}
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(28, 29, 31, 0.15);
+}
+
+.btn-secondary {
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+.btn-secondary:hover {
+  background-color: var(--bg-alt);
+  border-color: var(--text-main);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--text-main);
+}
+.btn-outline:hover {
+  background-color: var(--text-main);
+  color: #FFFFFF;
+}
+
+.btn-sm {
+  padding: 8px 18px;
+  font-size: 0.82rem;
+}
+
+.btn-lg {
+  padding: 16px 36px;
+  font-size: 1rem;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* ---------------- Badges & Tags ---------------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.badge-sale {
+  background-color: #FBF0EB;
+  color: #9C4B2E;
+  border: 1px solid #F3DACF;
+}
+
+.badge-new {
+  background-color: #EEF3EE;
+  color: #4A634D;
+  border: 1px solid #D5E2D5;
+}
+
+.badge-featured {
+  background-color: #F5EFE6;
+  color: #7A6348;
+  border: 1px solid #E5D7C5;
+}
+
+.badge-stock {
+  background-color: #F3F4F6;
+  color: #4B5563;
+}
+
+/* ---------------- Product Cards ---------------- */
+.product-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+  position: relative;
+}
+
+.product-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.product-card-image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/5;
+  background-color: #F6F4EE;
+  overflow: hidden;
+}
+
+.product-card-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-card:hover .product-card-image-wrap img {
+  transform: scale(1.03);
+}
+
+.product-card-content {
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* ---------------- Product Grid ---------------- */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 1100px) {
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .product-card-content {
+    padding: 10px 8px;
+  }
+}
+
+/* ---------------- Card Component ---------------- */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+
+.card:hover {
+  border-color: var(--border-strong);
+}
+
+/* ---------------- Inputs & Forms ---------------- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-body);
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-size: 0.92rem;
+  transition: var(--transition-fast);
+}
+
+.form-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-glow);
+}
+
+/* ---------------- Breadcrumbs ---------------- */
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.breadcrumbs a {
+  color: var(--text-secondary);
+  transition: var(--transition-fast);
+}
+
+.breadcrumbs a:hover {
+  color: var(--text-main);
+}
+
+/* ---------------- Drawer Overlay & Animations ---------------- */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(24, 24, 26, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  transition: opacity 0.3s ease;
+}
+
+.drawer-panel {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 380px;
+  background-color: var(--bg-surface);
+  z-index: 1000;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drawer-left {
+  left: 0;
+  transform: translateX(-100%);
+}
+.drawer-left.open {
+  transform: translateX(0);
+}
+
+.drawer-right {
+  right: 0;
+  transform: translateX(100%);
+}
+.drawer-right.open {
+  transform: translateX(0);
+}
+
+/* ---------------- Custom Scrollbar ---------------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-page);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D5CFC2;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B3AC9C;
+}
+
+@media (min-width: 960px) {
+  .desktop-nav {
+    display: flex !important;
+  }
+}
+
+.category-card:hover img {
+  transform: scale(1.05);
+}
