@@ -16,7 +16,38 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from database import get_db, init_db
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+
+@app.after_request
+def after_request(response):
+    origin = request.headers.get('Origin')
+    if origin:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+    else:
+        response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With, Accept, Origin'
+    return response
+
+@app.route('/', defaults={'path': ''}, methods=['OPTIONS'])
+@app.route('/<path:path>', methods=['OPTIONS'])
+def options_handler(path):
+    return '', 204
+
+# Auto-initialize database on server startup
+with app.app_context():
+    try:
+        init_db()
+        conn = get_db()
+        admin_row = conn.execute('SELECT COUNT(*) FROM users WHERE role="admin"').fetchone()
+        count = admin_row[0] if admin_row else 0
+        conn.close()
+        if count == 0:
+            from seed import seed_database
+            seed_database()
+    except Exception as e:
+        print(f"Database bootstrap notice: {e}")
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)

@@ -1,6 +1,12 @@
-const API_BASE = import.meta.env.VITE_API_URL
-  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api`
-  : '/api';
+const getApiBase = () => {
+  if (import.meta.env.VITE_API_URL) {
+    const base = import.meta.env.VITE_API_URL.replace(/\/$/, '');
+    return base.endsWith('/api') ? base : `${base}/api`;
+  }
+  return '/api';
+};
+
+export const API_BASE = getApiBase();
 
 export const getAuthToken = () => {
   return localStorage.getItem('kg_token');
@@ -40,106 +46,44 @@ export async function fetchApi(endpoint, options = {}, isAdmin = false) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  try {
-    const response = await fetch(`${API_BASE}${endpoint}`, {
-      ...options,
-      headers
-    });
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const url = `${API_BASE}${cleanEndpoint}`;
 
-    // If static server (e.g. Vercel static deployment) returns 405 Method Not Allowed for POST/PUT/DELETE
-    if (response.status === 405) {
-      if (endpoint === '/admin/login') {
-        const body = options.body ? JSON.parse(options.body) : {};
-        const email = (body.email || '').trim().toLowerCase();
-        const pw = body.password || '';
-        if ((email.includes('admin') || email === 'admin@kidsgarments.pk' || email === 'admin@kidsgarments.com') &&
-            (pw === 'AdminPassword123!' || pw === 'admin123' || pw === 'admin')) {
-          return {
-            message: 'Admin authenticated successfully',
-            token: 'demo-admin-jwt-token-kg-pk',
-            user: {
-              id: 1,
-              email: 'admin@kidsgarments.pk',
-              full_name: 'Head Administrator',
-              role: 'admin'
-            }
-          };
-        }
-        throw new Error('Invalid administrator credentials.');
-      }
+  const response = await fetch(url, {
+    ...options,
+    headers
+  });
 
-      if (endpoint === '/admin/me') {
-        return {
-          user: {
-            id: 1,
-            email: 'admin@kidsgarments.pk',
-            full_name: 'Head Administrator',
-            role: 'admin',
-            phone: '+92 300 1234567'
-          }
-        };
-      }
-
-      if (endpoint === '/auth/login') {
-        const body = options.body ? JSON.parse(options.body) : {};
-        const email = (body.email || '').trim().toLowerCase();
-        const pw = body.password || '';
-        if (pw === 'password123' || pw === 'admin123') {
-          return {
-            message: 'Login successful',
-            token: 'demo-customer-jwt-token',
-            user: {
-              id: 2,
-              email: email || 'ayesha.khan@example.com',
-              full_name: 'Ayesha Khan',
-              role: 'customer'
-            }
-          };
-        }
-      }
-
-      if (endpoint === '/auth/me') {
-        return {
-          user: {
-            id: 2,
-            email: 'ayesha.khan@example.com',
-            full_name: 'Ayesha Khan',
-            role: 'customer',
-            phone: '+92 300 8456789'
-          }
-        };
-      }
-
-      throw new Error(`The backend API is not connected on this preview URL. Please set VITE_API_URL or run locally.`);
+  const contentType = response.headers.get('content-type') || '';
+  let data = {};
+  if (contentType.includes('application/json')) {
+    data = await response.json().catch(() => ({}));
+  } else {
+    const text = await response.text().catch(() => '');
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { message: text };
     }
+  }
 
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-      const errorMsg = data.error || data.message || `Request failed with status ${response.status}`;
-      const err = new Error(errorMsg);
-      err.response = { data, status: response.status };
-      throw err;
-    }
-
-    return data;
-  } catch (err) {
-    if (err.message && err.message.includes('Failed to fetch')) {
-      if (endpoint === '/admin/login') {
-        return {
-          message: 'Admin authenticated successfully',
-          token: 'demo-admin-jwt-token-kg-pk',
-          user: {
-            id: 1,
-            email: 'admin@kidsgarments.pk',
-            full_name: 'Head Administrator',
-            role: 'admin'
-          }
-        };
+  if (!response.ok) {
+    let errorMsg = data.error || data.message;
+    if (!errorMsg) {
+      if (response.status === 405) {
+        errorMsg = 'Backend API returned 405 (Method Not Allowed). Please ensure VITE_API_URL points to your live backend server.';
+      } else if (response.status === 404) {
+        errorMsg = `API route not found: ${cleanEndpoint}`;
+      } else {
+        errorMsg = `Request failed with status ${response.status}`;
       }
     }
+    const err = new Error(errorMsg);
+    err.response = { data, status: response.status };
     throw err;
   }
+
+  return data;
 }
 
 export const api = {
@@ -274,27 +218,21 @@ export const api = {
   }
 };
 
-// Convenient Axios-like wrapper for Admin Pages that expect `res.data`
 const wrapData = async (promise) => {
   const result = await promise;
   return { data: result };
 };
 
 export const adminApi = {
-  // Products
   getProducts: (params) => wrapData(api.getAdminProducts(params)),
   getProduct: (id) => wrapData(api.getAdminProduct(id)),
   createProduct: (data) => wrapData(api.createAdminProduct(data)),
   updateProduct: (id, data) => wrapData(api.updateAdminProduct(id, data)),
   deleteProduct: (id) => wrapData(api.deleteAdminProduct(id)),
-
-  // Categories
   getCategories: () => wrapData(api.getAdminCategories()),
   createCategory: (data) => wrapData(api.createAdminCategory(data)),
   updateCategory: (id, data) => wrapData(api.updateAdminCategory(id, data)),
   deleteCategory: (id) => wrapData(api.deleteAdminCategory(id)),
-
-  // Attributes (Sizes & Colors)
   getAttributes: async () => {
     const [sizesRes, colorsRes] = await Promise.all([
       api.getAdminSizes(),
@@ -306,40 +244,24 @@ export const adminApi = {
   deleteSize: (id) => wrapData(api.deleteAdminSize(id)),
   addColor: (data) => wrapData(api.createAdminColor(data)),
   deleteColor: (id) => wrapData(api.deleteAdminColor(id)),
-
-  // Inventory
   getInventory: (params) => wrapData(api.getAdminInventory(params)),
   updateProductStock: (id, stock) => wrapData(api.updateAdminStock(id, { stock })),
-
-  // Orders
   getOrders: (params) => wrapData(api.getAdminOrders(params)),
   getOrder: (id) => wrapData(api.getAdminOrder(id)),
   updateOrderStatus: (id, data) => wrapData(api.updateAdminOrderStatus(id, data)),
-
-  // Customers
   getCustomers: (params) => wrapData(api.getAdminCustomers(params)),
   getCustomerOrders: (id) => wrapData(api.getAdminCustomer(id)),
-
-  // Coupons
   getCoupons: () => wrapData(api.getAdminCoupons()),
   createCoupon: (data) => wrapData(api.createAdminCoupon(data)),
   updateCoupon: (id, data) => wrapData(api.updateAdminCoupon(id, data)),
   deleteCoupon: (id) => wrapData(api.deleteAdminCoupon(id)),
-
-  // Reviews
   getReviews: (params) => wrapData(api.getAdminReviews(params)),
   updateReviewStatus: (id, status) => wrapData(api.updateAdminReviewStatus(id, { status })),
   deleteReview: (id) => wrapData(api.deleteAdminReview(id)),
-
-  // Returns
   getReturns: (params) => wrapData(api.getAdminReturns(params)),
   updateReturnStatus: (id, data) => wrapData(api.updateAdminReturnStatus(id, data)),
-
-  // Settings
   getSettings: () => wrapData(api.getAdminSettings()),
   updateSettings: (data) => wrapData(api.updateAdminSettings(data)),
-
-  // Image Upload
   uploadImage: (fileOrFormData) => wrapData(api.uploadImage(fileOrFormData))
 };
 
